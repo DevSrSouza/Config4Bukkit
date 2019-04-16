@@ -1,6 +1,5 @@
 package br.com.devsrsouza.config4bukkit;
 
-import com.sun.istack.internal.NotNull;
 import com.typesafe.config.*;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -28,7 +27,7 @@ public class HoconConfiguration extends FileConfiguration {
     }
 
     @Override
-    public void loadFromString(@NotNull String contents) {
+    public void loadFromString(String contents) {
         Validate.notNull(contents, "Contents cannot be null");
 
         Config config = ConfigFactory.parseString(contents, configParseOptions());
@@ -45,11 +44,16 @@ public class HoconConfiguration extends FileConfiguration {
 
     @Override
     protected String buildHeader() {
-        String[] lines = options().header().split("\n");
+        String header = options().header();
+        if(header != null) {
+            String[] lines = options().header().split("\n");
 
-        return Arrays.stream(lines)
-                .map(string -> COMMENT_PREFIX + string)
-                .collect(Collectors.joining("\n"));
+            return Arrays.stream(lines)
+                    .map(string -> COMMENT_PREFIX + string)
+                    .collect(Collectors.joining("\n"));
+        } else {
+            return "";
+        }
     }
 
     @Override
@@ -82,8 +86,7 @@ public class HoconConfiguration extends FileConfiguration {
         }
     }
 
-    public static @NotNull
-    HoconConfiguration loadConfiguration(@NotNull File file) {
+    public static HoconConfiguration loadConfiguration(File file) {
         Validate.notNull(file, "File cannot be null");
 
         HoconConfiguration config = new HoconConfiguration();
